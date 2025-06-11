@@ -2,6 +2,17 @@ import HomePresenter from './home-presenter';
 
 const HomePage = {
   async render() {
+    const isLoggedIn = !!localStorage.getItem('token'); // atau cek cara autentikasi kamu
+
+    if (!isLoggedIn) {
+      return `
+        <section class="home__guest">
+          <h2>Selamat datang di StoryApp!</h2>
+          <p>Silakan <a href="#/login">Login</a> atau <a href="#/register">Register</a> untuk melihat dan menambah cerita.</p>
+        </section>
+      `;
+    }
+
     return `
       <section class="content">
         <h2>Daftar Cerita</h2>
@@ -15,20 +26,13 @@ const HomePage = {
 
   async afterRender() {
     const token = localStorage.getItem('token');
+    if (!token) return; // Jangan jalankan presenter jika belum login
+
     await HomePresenter.init({
       token,
       container: document.getElementById('storyList'),
       mapContainer: document.getElementById('storyMap'),
     });
-
-    // ❌ Jangan tambahkan menu Peta lagi
-    // (Baris di bawah ini DIBUANG)
-    // const nav = document.querySelector('.main-header .nav-list');
-    // if (nav && token && !nav.querySelector('a[href="#/map"]')) {
-    //   nav.insertAdjacentHTML('beforeend', `
-    //     <li><a href="#/map"><i class="fas fa-map-marked-alt"></i> Peta</a></li>
-    //   `);
-    // }
   },
 };
 
