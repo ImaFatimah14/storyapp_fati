@@ -1,0 +1,2 @@
+APP_URL=https://ImaFatimah14.github.io/storyapp_fati/
+MAP_SERVICE_API_KEY=<api_key>
