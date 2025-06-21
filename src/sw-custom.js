@@ -7,7 +7,12 @@ self.addEventListener('push', (event) => {
   try {
     data = event.data ? event.data.json() : {};
   } catch (e) {
+    // Fallback jika data bukan JSON, gunakan sebagai text
     console.error('Push data tidak valid JSON', e);
+    data = {
+      title: 'Notifikasi',
+      body: event.data ? event.data.text() : 'Anda memiliki pesan baru',
+    };
   }
 
   const title = data.title || 'Notifikasi Baru';
@@ -20,7 +25,17 @@ self.addEventListener('push', (event) => {
     },
   };
 
-  event.waitUntil(self.registration.showNotification(title, options));
+  // Cek permission sebelum showNotification
+  event.waitUntil(
+    self.registration.pushManager.getSubscription().then(() => {
+      if (Notification.permission === 'granted') {
+        return self.registration.showNotification(title, options);
+      } else {
+        console.warn('Notifikasi tidak diizinkan oleh user.');
+        return Promise.resolve();
+      }
+    })
+  );
 });
 
 self.addEventListener('notificationclick', (event) => {

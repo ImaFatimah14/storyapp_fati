@@ -28,6 +28,11 @@ const Navbar = () => {
             <i class="fas fa-sign-out-alt"></i> Logout
           </a>
         </li>
+        <li>
+          <button id="notif-toggle-btn" class="notif-btn" aria-label="Toggle Push Notification">
+            <span id="notif-btn-text">Subscribe</span> <i class="fas fa-bell"></i>
+          </button>
+        </li>
       </ul>
     </nav>
   `;
@@ -48,6 +53,37 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.removeItem('token');
       window.location.href = '#/login';
     });
+  }
+});
+
+document.addEventListener('DOMContentLoaded', async () => {
+  // Push Notification Toggle
+  const notifBtn = document.getElementById('notif-toggle-btn');
+  const notifBtnText = document.getElementById('notif-btn-text');
+  if (notifBtn) {
+    // Cek status awal
+    if ('serviceWorker' in navigator) {
+      const reg = await navigator.serviceWorker.ready;
+      const sub = await reg.pushManager.getSubscription();
+      notifBtnText.textContent = sub ? 'Unsubscribe' : 'Subscribe';
+    }
+    notifBtn.onclick = async () => {
+      if (!('serviceWorker' in navigator)) {
+        alert('Service worker tidak didukung browser ini.');
+        return;
+      }
+      const reg = await navigator.serviceWorker.ready;
+      const sub = await reg.pushManager.getSubscription();
+      if (sub) {
+        await sub.unsubscribe();
+        notifBtnText.textContent = 'Subscribe';
+        alert('Push notification dinonaktifkan.');
+      } else {
+        const { subscribe } = await import('../utils/push-notification.js');
+        await subscribe(reg);
+        notifBtnText.textContent = 'Unsubscribe';
+      }
+    };
   }
 });
 

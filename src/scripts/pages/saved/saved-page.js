@@ -38,6 +38,13 @@ const SavedStoriesPage = {
       if (e.target.classList.contains('delete-btn')) {
         const id = e.target.dataset.id;
         await SavedStoryDB.delete(id);
+        // Notifikasi hapus cerita
+        if (window.Notification && Notification.permission === 'granted') {
+          new Notification('Cerita dihapus dari tersimpan', {
+            body: 'Cerita berhasil dihapus dari daftar tersimpan.',
+            icon: '/icons/icon-192x192.png',
+          });
+        }
         await this.afterRender();
       }
     };

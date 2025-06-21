@@ -182,6 +182,13 @@ const AddPresenter = {
       if (result.error) {
         statusElement.textContent = `Gagal mengirim: ${result.message}`;
         statusElement.style.color = 'red';
+        // Notifikasi gagal
+        if (window.Notification && Notification.permission === 'granted') {
+          new Notification('Gagal mengirim cerita!', {
+            body: result.message,
+            icon: '/icons/icon-192x192.png',
+          });
+        }
       } else {
         statusElement.textContent = 'Cerita berhasil dikirim!';
         statusElement.style.color = 'green';

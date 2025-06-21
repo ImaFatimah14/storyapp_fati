@@ -29,8 +29,22 @@ const HomePresenter = {
             if (!existing) {
               await SavedStoryDB.put(story);
               alert('Cerita telah disimpan.');
+              // Notifikasi sukses simpan
+              if (window.Notification && Notification.permission === 'granted') {
+                new Notification('Cerita berhasil disimpan!', {
+                  body: 'Cerita sudah masuk ke daftar tersimpan.',
+                  icon: '/icons/icon-192x192.png',
+                });
+              }
             } else {
               alert('Cerita sudah ada dalam daftar tersimpan.');
+              // Notifikasi duplikat
+              if (window.Notification && Notification.permission === 'granted') {
+                new Notification('Cerita sudah ada!', {
+                  body: 'Cerita sudah ada dalam daftar tersimpan.',
+                  icon: '/icons/icon-192x192.png',
+                });
+              }
             }
           }
         });
