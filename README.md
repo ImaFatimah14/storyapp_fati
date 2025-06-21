@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # App Starter Project with Webpack
 
 Proyek ini adalah setup dasar untuk aplikasi web yang menggunakan webpack untuk proses bundling, Babel untuk transpile JavaScript, serta mendukung proses build dan serving aplikasi.
@@ -67,6 +66,29 @@ starter-project/
 ├── webpack.dev.js          # Webpack development configuration
 └── webpack.prod.js         # Webpack production configuration
 ```
-=======
-# storyapp_fati
->>>>>>> 30929c20d5525412d6906679421f31d24aac1823
+
+## Implementasi Web Push Notification (Kriteria Wajib 2)
+
+Aplikasi ini telah mengimplementasikan web push notification sesuai kriteria wajib 2. Berikut bukti dan penjelasan implementasinya:
+
+1. **Tombol Subscribe/Unsubscribe**
+   - Pengguna dapat mengaktifkan atau menonaktifkan langganan push notification melalui tombol berikut:
+   
+     ![Tombol Unsubscribe](./src/public/images/screenshot-unsubscribe.png)
+
+2. **Notifikasi Sukses Berlangganan**
+   - Setelah berhasil subscribe, pengguna akan mendapatkan notifikasi sukses:
+   
+     ![Notifikasi Sukses](./src/public/images/screenshot-success.png)
+
+3. **Notifikasi Real-time dari Server**
+   - Jika server mengirimkan push notification, pengguna akan menerima notifikasi real-time seperti berikut:
+   
+     ![Notifikasi Real-time](./src/public/images/screenshot-realtime.png)
+
+4. **Alur Kerja**
+   - Setelah pengguna subscribe, endpoint push notification secara otomatis dikirim ke backend melalui endpoint `/notifications/subscribe`.
+   - Server dapat mengirim notifikasi ke endpoint tersebut sehingga pengguna menerima pemberitahuan secara real-time.
+
+> **Catatan:**
+> Gambar di atas adalah hasil uji pada aplikasi ini dan membuktikan bahwa fitur push notification sudah berjalan sesuai kriteria.

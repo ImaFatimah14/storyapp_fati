@@ -38,6 +38,23 @@ const PushNotificationHelper = {
       console.log('✅ Push Subscription berhasil:', JSON.stringify(subscription));
       alert('Push notification berhasil diaktifkan!');
 
+      // Kirim subscription ke backend
+      try {
+        const response = await fetch('/notifications/subscribe', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(subscription),
+        });
+        if (!response.ok) {
+          throw new Error('Gagal mendaftarkan endpoint notifikasi ke server');
+        }
+        console.log('✅ Endpoint notifikasi berhasil didaftarkan ke server');
+      } catch (err) {
+        console.error('❌ Gagal mendaftarkan endpoint notifikasi:', err);
+      }
+
       return subscription;
     } catch (err) {
       console.error('❌ Gagal subscribe push notification:', err);

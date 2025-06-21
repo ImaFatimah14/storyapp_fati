@@ -119,38 +119,38 @@
   </script>
 
   <!-- Add to Homescreen (A2HS) & Subscribe Push -->
-<script type="module">
-  import { subscribePush } from './scripts/utils/push-helper.js';
+  <!-- <script type="module">
+    import { subscribePush } from './scripts/utils/push-helper.js';
 
-  let deferredPrompt;
+    let deferredPrompt;
 
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
 
-    const subscribeBtn = document.getElementById('subscribe-push-btn');
-    if (subscribeBtn) {
-      subscribeBtn.style.display = 'block';
+      const subscribeBtn = document.getElementById('subscribe-push-btn');
+      if (subscribeBtn) {
+        subscribeBtn.style.display = 'block';
 
-      subscribeBtn.addEventListener('click', async () => {
-        // ✅ Panggil subscribe push
-        await subscribePush();
+        subscribeBtn.addEventListener('click', async () => {
+          // ✅ Panggil subscribe push
+          await subscribePush();
 
-        // ✅ Tampilkan prompt A2HS
-        if (deferredPrompt) {
-          deferredPrompt.prompt();
-          const choiceResult = await deferredPrompt.userChoice;
-          console.log(
-            choiceResult.outcome === 'accepted'
-              ? '✅ User menerima prompt A2HS'
-              : '❌ User menolak prompt A2HS'
-          );
-          deferredPrompt = null;
-          subscribeBtn.style.display = 'none';
-        }
-      });
-    }
-  });
-</script>
+          // ✅ Tampilkan prompt A2HS
+          if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const choiceResult = await deferredPrompt.userChoice;
+            console.log(
+              choiceResult.outcome === 'accepted'
+                ? '✅ User menerima prompt A2HS'
+                : '❌ User menolak prompt A2HS'
+            );
+            deferredPrompt = null;
+            subscribeBtn.style.display = 'none';
+          }
+        });
+      }
+    });
+  </script> -->
 </body>
 </html>

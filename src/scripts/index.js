@@ -58,7 +58,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 if ('serviceWorker' in navigator && 'PushManager' in window) {
   window.addEventListener('load', async () => {
     try {
-      const registration = await navigator.serviceWorker.register('/service-worker.js');
+      // Gunakan path relatif agar cocok di GitHub Pages
+      const registration = await navigator.serviceWorker.register('service-worker.js');
       console.log('✅ Service Worker berhasil didaftarkan.');
 
       await PushNotificationHelper.register(registration);
