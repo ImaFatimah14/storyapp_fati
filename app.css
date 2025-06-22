@@ -1,4 +1,4 @@
-/* ===================== RESET ===================== */
+npm run start-dev/* ===================== RESET ===================== */
 * {
   margin: 0;
   padding: 0;
@@ -451,6 +451,44 @@ header {
 
 .add-form button:hover {
   background-color: #5c4345;
+}
+
+/* ===================== NOTIFIKASI BUTTON ===================== */
+.notif-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #fff;
+  background-color: #735557; /* sama dengan tema navbar */
+  transition: background 0.3s, color 0.3s;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
+}
+
+.notif-btn .notif-btn-icon {
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+}
+
+.notif-btn.aktif {
+  background-color: #735557;
+  color: #fff;
+}
+
+.notif-btn.nonaktif {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+.notif-btn:focus {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
 }
 
 /* ===================== MEDIA QUERIES ===================== */
