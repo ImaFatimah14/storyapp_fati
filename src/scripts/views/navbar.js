@@ -30,7 +30,8 @@ const Navbar = () => {
         </li>
         <li>
           <button id="notif-toggle-btn" class="notif-btn" aria-label="Toggle Push Notification">
-            <span id="notif-btn-text">Subscribe</span> <i class="fas fa-bell"></i>
+            <span id="notif-btn-icon" class="notif-btn-icon"></span>
+            <span id="notif-btn-text"></span>
           </button>
         </li>
       </ul>
@@ -60,12 +61,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Push Notification Toggle
   const notifBtn = document.getElementById('notif-toggle-btn');
   const notifBtnText = document.getElementById('notif-btn-text');
+  const notifBtnIcon = document.getElementById('notif-btn-icon');
   if (notifBtn) {
     // Cek status awal
     if ('serviceWorker' in navigator) {
       const reg = await navigator.serviceWorker.ready;
       const sub = await reg.pushManager.getSubscription();
-      notifBtnText.textContent = sub ? 'Unsubscribe' : 'Subscribe';
+      if (sub) {
+        notifBtnText.textContent = 'Nonaktifkan Notifikasi';
+        notifBtnIcon.innerHTML = '<i class="fas fa-bell-slash"></i>';
+        notifBtn.style.backgroundColor = '#e74c3c';
+      } else {
+        notifBtnText.textContent = 'Aktifkan Notifikasi';
+        notifBtnIcon.innerHTML = '<i class="fas fa-bell"></i>';
+        notifBtn.style.backgroundColor = '#7da7d9';
+      }
     }
     notifBtn.onclick = async () => {
       if (!('serviceWorker' in navigator)) {
@@ -76,12 +86,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       const sub = await reg.pushManager.getSubscription();
       if (sub) {
         await sub.unsubscribe();
-        notifBtnText.textContent = 'Subscribe';
-        alert('Push notification dinonaktifkan.');
+        notifBtnText.textContent = 'Aktifkan Notifikasi';
+        notifBtnIcon.innerHTML = '<i class="fas fa-bell"></i>';
+        notifBtn.style.backgroundColor = '#7da7d9';
+        alert('Notifikasi dinonaktifkan.');
       } else {
-        const { subscribe } = await import('../utils/push-notification.js');
-        await subscribe(reg);
-        notifBtnText.textContent = 'Unsubscribe';
+        const { default: PushNotificationHelper } = await import('../utils/push-notification.js');
+        await PushNotificationHelper.subscribe(reg);
+        notifBtnText.textContent = 'Nonaktifkan Notifikasi';
+        notifBtnIcon.innerHTML = '<i class="fas fa-bell-slash"></i>';
+        notifBtn.style.backgroundColor = '#e74c3c';
       }
     };
   }
