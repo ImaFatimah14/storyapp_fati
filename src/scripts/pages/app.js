@@ -1,5 +1,10 @@
 import routes from '../routes/routes';
 import { getActiveRoute, parseRouteParams } from '../routes/url-parser';
+import {
+  isCurrentPushSubscriptionAvailable,
+  subscribe,
+  unsubscribe,
+} from '../utils/notification-helper.js';
 
 class App {
   #content = null;
@@ -48,6 +53,28 @@ class App {
         await this.renderPage();
       });
     });
+  }
+
+  async #setupPushNotification() {
+    // Hapus tombol notifikasi di luar navbar (jika ada)
+    const oldTools = document.getElementById('push-notification-tools');
+    if (oldTools) oldTools.remove();
+    // Tidak perlu render tombol notifikasi di luar navbar lagi
+
+    const isSubscribed = await isCurrentPushSubscriptionAvailable();
+    document.getElementById('subscribe-button').classList.toggle('aktif', !isSubscribed);
+    document.getElementById('subscribe-button').classList.toggle('nonaktif', isSubscribed);
+    document.getElementById('unsubscribe-button').classList.toggle('aktif', isSubscribed);
+    document.getElementById('unsubscribe-button').classList.toggle('nonaktif', !isSubscribed);
+    if (isSubscribed) {
+      document.getElementById('unsubscribe-button').onclick = () => {
+        unsubscribe().finally(() => this.#setupPushNotification());
+      };
+    } else {
+      document.getElementById('subscribe-button').onclick = () => {
+        subscribe().finally(() => this.#setupPushNotification());
+      };
+    }
   }
 
   async renderPage() {
@@ -122,6 +149,7 @@ class App {
         module.default();
       });
     }
+    await this.#setupPushNotification();
   }
 }
 

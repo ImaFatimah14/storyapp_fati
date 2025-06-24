@@ -11,7 +11,7 @@ module.exports = {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist'),
     clean: true,
-    publicPath: '/storyapp_fati/',
+    publicPath: process.env.NODE_ENV === 'production' ? '/Storyfati2/' : '/',
   },
   module: {
     rules: [
@@ -38,10 +38,6 @@ module.exports = {
         {
           from: path.resolve(__dirname, 'src/public/favicon.png'),
           to: 'favicon.png',
-        },
-        {
-          from: path.resolve(__dirname, 'src/sw-custom.js'),
-          to: 'service-worker.js',
         },
         {
           from: path.resolve(__dirname, 'src/public/images'),

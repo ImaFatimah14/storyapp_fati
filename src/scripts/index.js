@@ -3,10 +3,61 @@ import '../styles/styles.css';
 
 // Import komponen utama dan helper push notification
 import App from './pages/app.js';
-import PushNotificationHelper, { subscribePush } from './utils/push-notification.js';
+import PushNotificationHelper from './utils/push-notification.js';
+import { registerServiceWorker } from './utils/sw-register.js';
+import {
+  isCurrentPushSubscriptionAvailable,
+  subscribe,
+  unsubscribe
+} from './utils/notification-helper.js';
 
 // Inisialisasi aplikasi saat DOM dimuat
+function initNotifToggleBtn() {
+  const notifBtn = document.getElementById('notif-toggle-btn');
+  const notifText = document.getElementById('notif-btn-text');
+  const notifIcon = document.getElementById('notif-btn-icon');
+  if (!notifBtn || !notifText || !notifIcon) return;
+  notifBtn.onclick = async () => {
+    const isSubscribed = await isCurrentPushSubscriptionAvailable();
+    if (isSubscribed) {
+      await unsubscribe();
+      if (Notification.permission === 'granted') {
+        new Notification('Notifikasi Laporan!', {
+          body: 'Notifikasi dinonaktifkan. Anda tidak akan menerima pemberitahuan.',
+          icon: '/icons/icon-192x192.png',
+        });
+      }
+    } else {
+      await subscribe();
+      if (Notification.permission === 'granted') {
+        new Notification('Notifikasi Laporan!', {
+          body: 'Notifikasi diaktifkan! Anda akan menerima pemberitahuan.',
+          icon: '/icons/icon-192x192.png',
+        });
+      }
+    }
+    updateNotifButtonState();
+  };
+  async function updateNotifButtonState() {
+    const isSubscribed = await isCurrentPushSubscriptionAvailable();
+    if (isSubscribed) {
+      notifBtn.classList.remove('nonaktif');
+      notifBtn.classList.add('aktif');
+      notifText.textContent = 'Nonaktifkan Notifikasi';
+      notifIcon.innerHTML = '<i class="fas fa-bell-slash"></i>';
+    } else {
+      notifBtn.classList.remove('aktif');
+      notifBtn.classList.add('nonaktif');
+      notifText.textContent = 'Aktifkan Notifikasi';
+      notifIcon.innerHTML = '<i class="fas fa-bell"></i>';
+    }
+  }
+  updateNotifButtonState();
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
+  await registerServiceWorker();
+
   const app = new App({
     content: document.querySelector('#main-content'),
     drawerButton: document.querySelector('#drawer-button'),
@@ -20,51 +71,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     await app.renderPage();
   });
 
-  // Inisialisasi tombol push notification & Add to Homescreen (A2HS)
-  let deferredPrompt;
-  const subscribeBtn = document.getElementById('subscribe-push-btn');
-
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-
-    if (subscribeBtn) {
-      subscribeBtn.style.display = 'block';
-
-      subscribeBtn.addEventListener('click', async () => {
-        try {
-          // ✅ 1. Subscribe push
-          await subscribePush();
-
-          // ✅ 2. Tampilkan prompt A2HS
-          if (deferredPrompt) {
-            deferredPrompt.prompt();
-            const choice = await deferredPrompt.userChoice;
-            console.log(choice.outcome === 'accepted'
-              ? '✅ User menerima prompt A2HS'
-              : '❌ User menolak prompt A2HS');
-            deferredPrompt = null;
-            subscribeBtn.style.display = 'none';
-          }
-        } catch (err) {
-          console.error('Gagal langganan push atau A2HS:', err);
-        }
-      });
-    }
-  });
+  initNotifToggleBtn();
 });
 
-// Daftarkan Service Worker dan inisialisasi Push Notification
-if ('serviceWorker' in navigator && 'PushManager' in window) {
-  window.addEventListener('load', async () => {
-    try {
-      // Gunakan path relatif agar cocok di GitHub Pages
-      const registration = await navigator.serviceWorker.register('service-worker.js');
-      console.log('✅ Service Worker berhasil didaftarkan.');
+window.addEventListener('hashchange', () => {
+  setTimeout(initNotifToggleBtn, 0);
+});
 
-      await PushNotificationHelper.register(registration);
-    } catch (error) {
-      console.error('❌ Gagal mendaftarkan Service Worker atau Push Notification:', error);
+// Unregister service worker lama di mode development agar tidak error precache
+if (process.env.NODE_ENV === 'development' && 'serviceWorker' in navigator) {
+  window.addEventListener('load', async () => {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    for (const reg of registrations) {
+      await reg.unregister();
+      console.log('Service worker lama di-unregister di mode dev:', reg);
+    }
+  });
+}
+
+// Clear seluruh cache browser (Cache Storage) di mode development
+if (process.env.NODE_ENV === 'development' && 'caches' in window) {
+  window.addEventListener('load', async () => {
+    const cacheNames = await caches.keys();
+    for (const name of cacheNames) {
+      await caches.delete(name);
+      console.log('Cache storage dihapus:', name);
     }
   });
 }

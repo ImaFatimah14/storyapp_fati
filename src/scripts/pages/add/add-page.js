@@ -1,4 +1,5 @@
 import AddPresenter from './add-presenter';
+import { BASE_URL, VAPID_PUBLIC_KEY } from '../../config.js';
 
 const AddPage = {
   async render() {
@@ -14,7 +15,7 @@ const AddPage = {
             <button type="button" id="closeCameraBtn" class="btn danger">❌ Tutup Kamera</button>
             <button type="button" id="startCameraBtn" class="btn warning">📷 Ambil Foto</button>
             <label for="imageInput" class="btn upload">📤 Unggah File</label>
-            <input type="file" id="imageInput" accept="image/*" hidden />
+            <input type="file" id="imageInput" name="photo" accept="image/*" hidden />
           </div>
 
           <video id="cameraPreview" autoplay playsinline style="display: none; width: 100%; border-radius: 10px; margin-top: 10px;"></video>
@@ -99,6 +100,77 @@ const AddPage = {
     closeCameraBtn.addEventListener('click', () => {
       stopCamera();
       startCameraBtn.textContent = '📷 Ambil Foto';
+    });
+
+    const form = document.getElementById('addForm');
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(form);
+      const description = formData.get('description');
+      const file = formData.get('photo');
+      if (!description || !file || (file && file.size === 0)) {
+        alert('Deskripsi dan foto wajib diisi!');
+        return;
+      }
+      if (file && file.size > 1024 * 1024) {
+        alert('Ukuran foto maksimal 1MB!');
+        return;
+      }
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Anda harus login untuk menambah cerita!');
+        return;
+      }
+      // Kirim data ke server
+      const response = await fetch(`${BASE_URL}/stories`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Sukses:', result);
+
+        // Tampilkan notifikasi browser setelah cerita berhasil ditambahkan
+        if (Notification.permission === 'granted') {
+          new Notification('Notifikasi Laporan!', {
+            body: 'Cerita berhasil ditambahkan!',
+            icon: '/icons/icon-192x192.png',
+          });
+        }
+
+        // Reset form dan tampilan
+        form.reset();
+        photoPreview.style.display = 'none';
+        canvas.style.display = 'none';
+        video.style.display = 'none';
+        startCameraBtn.textContent = '📷 Ambil Foto';
+
+        // Panggil ulang inisialisasi presenter jika diperlukan
+        AddPresenter.init({
+          form: document.getElementById('addForm'),
+          mapId: 'map',
+          latInput: document.getElementById('lat'),
+          lonInput: document.getElementById('lon'),
+          fileInput: document.getElementById('imageInput'),
+          descriptionInput: document.getElementById('description'),
+          statusElement: document.getElementById('statusMessage'),
+        });
+      } else {
+        let errorMessage = 'Gagal menambah cerita.';
+        try {
+          const errorJson = await response.json();
+          if (errorJson && errorJson.message) errorMessage = errorJson.message;
+        } catch (e) {
+          errorMessage = await response.text();
+        }
+        document.getElementById('statusMessage').textContent = `Error: ${errorMessage}`;
+        alert(`Gagal menambah cerita: ${errorMessage}`);
+      }
     });
   },
 };

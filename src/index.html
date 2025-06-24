@@ -6,11 +6,11 @@
   <title>StoryApp</title>
 
   <!-- Favicon & Icons -->
-  <link rel="shortcut icon" href="favicon.png" />
-  <link rel="icon" href="icons/icon-192x192.png" />
+  <link rel="shortcut icon" href="/favicon.png" />
+  <link rel="icon" href="/icons/icon-192x192.png" />
 
   <!-- PWA Manifest -->
-  <link rel="manifest" href="manifest.json" />
+  <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#735557" />
 
   <!-- Leaflet CSS -->
@@ -36,6 +36,12 @@
 
       <nav id="navigation-drawer" class="navigation-drawer" aria-label="Navigasi utama">
         <ul id="nav-list" class="nav-list"></ul>
+        <li style="list-style:none; margin-top:1rem;">
+          <button id="notif-toggle-btn" class="notif-btn aktif" aria-label="Toggle Push Notification">
+            <span id="notif-btn-icon" class="notif-btn-icon"><i class="fas fa-bell"></i></span>
+            <span id="notif-btn-text">Aktifkan Notifikasi</span>
+          </button>
+        </li>
       </nav>
 
       <button
@@ -118,39 +124,7 @@
     window.addEventListener('hashchange', renderNavbar);
   </script>
 
-  <!-- Add to Homescreen (A2HS) & Subscribe Push -->
-  <!-- <script type="module">
-    import { subscribePush } from './scripts/utils/push-helper.js';
-
-    let deferredPrompt;
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-
-      const subscribeBtn = document.getElementById('subscribe-push-btn');
-      if (subscribeBtn) {
-        subscribeBtn.style.display = 'block';
-
-        subscribeBtn.addEventListener('click', async () => {
-          // ✅ Panggil subscribe push
-          await subscribePush();
-
-          // ✅ Tampilkan prompt A2HS
-          if (deferredPrompt) {
-            deferredPrompt.prompt();
-            const choiceResult = await deferredPrompt.userChoice;
-            console.log(
-              choiceResult.outcome === 'accepted'
-                ? '✅ User menerima prompt A2HS'
-                : '❌ User menolak prompt A2HS'
-            );
-            deferredPrompt = null;
-            subscribeBtn.style.display = 'none';
-          }
-        });
-      }
-    });
-  </script> -->
+  <!-- Push Notification Toggle Handler -->
+  <!-- Handler sudah dipindahkan ke index.js, script ini dihapus agar tidak error 404 -->
 </body>
 </html>

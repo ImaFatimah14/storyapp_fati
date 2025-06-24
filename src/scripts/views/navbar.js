@@ -21,18 +21,18 @@ const Navbar = () => {
         <li><a href="#/add"><i class="fas fa-plus"></i> Tambah Cerita</a></li>
         <li><a href="#/offline"><i class="fas fa-bookmark"></i> Tersimpan</a></li>
         <li><a href="#/about"><i class="fas fa-info-circle"></i> Tentang</a></li>
+        <li>
+          <button id="notif-toggle-btn" class="notif-btn" aria-label="Toggle Push Notification">
+            <span id="notif-btn-icon" class="notif-btn-icon"></span>
+            <span id="notif-btn-text"></span>
+          </button>
+        </li>
         <li><a href="#/login"><i class="fas fa-sign-in-alt"></i> Login</a></li>
         <li><a href="#/register"><i class="fas fa-user-plus"></i> Register</a></li>
         <li id="logout-li" style="display:none;">
           <a href="#" id="logout-link">
             <i class="fas fa-sign-out-alt"></i> Logout
           </a>
-        </li>
-        <li>
-          <button id="notif-toggle-btn" class="notif-btn" aria-label="Toggle Push Notification">
-            <span id="notif-btn-icon" class="notif-btn-icon"></span>
-            <span id="notif-btn-text"></span>
-          </button>
         </li>
       </ul>
     </nav>
